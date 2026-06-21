@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>AssassiM — Field Operations Console</title>
+
+<!-- ============================================================
+     SETUP — fill in these two values from your Supabase project
+     (Project Settings  ->  API):
+       SUPABASE_URL       = https://gjzinzlegjjcziwtxuwo.supabase.co
+       SUPABASE_ANON_KEY  = sb_publishable_OyAkr3NMVYNzolgI8FTMHg_oCHD9MNY
+     The join code and game-master code live in the DATABASE
+     (set them in the SQL file), never here.
+     ============================================================ -->
+<script>
+  const SUPABASE_URL      = "PASTE_YOUR_SUPABASE_URL_HERE";
+  const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY_HERE";
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  :root{
+    --ink:#0B1620;--ink2:#101F2B;--ink3:#162937;--line:rgba(120,200,210,.12);
+    --glow:#43E8C8;--glow-dim:#2bbfa6;--alert:#F0654E;--bone:#ECE7D9;--slate:#8295A2;--gold:#E9C16B;
+    --display:'Oswald','Arial Narrow',system-ui,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(1200px 600px at 80% -10%, rgba(67,232,200,.07), transparent 60%),
+               radial-gradient(900px 500px at -10% 110%, rgba(240,101,78,.06), transparent 55%), var(--ink);
+    color:var(--bone);font-family:var(--body);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);mix-blend-mode:overlay;}
+  .wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:22px 18px 60px;}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0;}
+  .reticle{width:34px;height:34px;flex:0 0 auto;position:relative;}
+  .reticle::before,.reticle::after{content:"";position:absolute;inset:0;border-radius:50%;}
+  .reticle::before{border:1.5px solid var(--glow);box-shadow:0 0 14px rgba(67,232,200,.5);opacity:.9;}
+  .reticle::after{inset:11px;background:var(--glow);box-shadow:0 0 10px var(--glow);}
+  .reticle i{position:absolute;background:var(--glow);opacity:.8;}
+  .reticle i.h{left:50%;top:-5px;width:1.5px;height:8px;transform:translateX(-50%);}
+  .reticle i.b{left:50%;bottom:-5px;width:1.5px;height:8px;transform:translateX(-50%);}
+  .reticle i.l{top:50%;left:-5px;height:1.5px;width:8px;transform:translateY(-50%);}
+  .reticle i.r{top:50%;right:-5px;height:1.5px;width:8px;transform:translateY(-50%);}
+  .title{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.16em;text-transform:uppercase;line-height:1;}
+  .title b{color:var(--glow);}
+  .subtitle{font-family:var(--mono);font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--slate);margin-top:3px;}
+  .chip{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);border-radius:2px;color:var(--slate);white-space:nowrap;}
+  .chip.live{color:var(--glow);border-color:rgba(67,232,200,.4);}
+  .chip.live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow);margin-right:6px;vertical-align:middle;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .panel{background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid var(--line);border-radius:3px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+  .corner{position:absolute;width:10px;height:10px;border:1px solid var(--glow);opacity:.5;}
+  .corner.tl{top:7px;left:7px;border-right:0;border-bottom:0;}.corner.tr{top:7px;right:7px;border-left:0;border-bottom:0;}
+  .corner.bl{bottom:7px;left:7px;border-right:0;border-top:0;}.corner.br{bottom:7px;right:7px;border-left:0;border-top:0;}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate);margin-bottom:4px;}
+  h2.phead{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 14px;}
+  p.lede{color:var(--slate);font-size:14px;margin:0 0 16px;}
+  label.fld{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin:14px 0 7px;}
+  input[type=text],input[type=email]{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:2px;color:var(--bone);font-family:var(--mono);font-size:16px;letter-spacing:.04em;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  input:focus{border-color:var(--glow);box-shadow:0 0 0 3px rgba(67,232,200,.12);}
+  input::placeholder{color:#4a5a66;}
+  button{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;border:1px solid var(--glow);background:var(--glow);color:#06241f;font-size:14px;padding:13px 18px;transition:transform .08s,box-shadow .15s,background .15s;}
+  button:hover{box-shadow:0 0 18px rgba(67,232,200,.35);}
+  button:active{transform:translateY(1px);}
+  button.block{width:100%;margin-top:18px;}
+  button.ghost{background:transparent;color:var(--glow);}button.ghost:hover{background:rgba(67,232,200,.08);}
+  button.danger{background:transparent;border-color:rgba(240,101,78,.5);color:var(--alert);}button.danger:hover{background:rgba(240,101,78,.1);box-shadow:none;}
+  button.sm{font-size:11px;padding:8px 12px;}
+  button:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
+  .msg{font-family:var(--mono);font-size:12px;letter-spacing:.04em;margin-top:14px;padding:10px 12px;border-radius:2px;border:1px solid;}
+  .msg.err{color:var(--alert);border-color:rgba(240,101,78,.4);background:rgba(240,101,78,.07);}
+  .msg.ok{color:var(--glow);border-color:rgba(67,232,200,.4);background:rgba(67,232,200,.07);}
+  .roster{display:flex;flex-direction:column;gap:8px;}
+  .pill{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:2px;padding:11px 14px;}
+  .pill .nm{font-family:var(--mono);font-size:14px;letter-spacing:.03em;}
+  .pill .meta2{font-family:var(--mono);font-size:11px;color:var(--slate);letter-spacing:.06em;}
+  .pill.dead{opacity:.5;}.pill.dead .nm{text-decoration:line-through;text-decoration-color:var(--alert);}
+  .pill.me{border-color:rgba(67,232,200,.4);}
+  .status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:7px;vertical-align:middle;}
+  .status-dot.alive{background:var(--glow);box-shadow:0 0 7px var(--glow);}.status-dot.out{background:var(--alert);}
+  .kc{color:var(--gold);}
+  .count{font-family:var(--display);font-size:46px;font-weight:700;letter-spacing:.04em;line-height:1;}
+  .count small{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);display:block;margin-top:6px;}
+  .dossier{background:linear-gradient(180deg,#13283450,#0b1620);border:1px solid rgba(67,232,200,.3);border-radius:3px;overflow:hidden;position:relative;margin-bottom:16px;}
+  .dossier .bar{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:rgba(67,232,200,.06);border-bottom:1px solid rgba(67,232,200,.18);}
+  .dossier .bar .lab{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--glow);}
+  .dossier .bar .file{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--slate);}
+  .dossier .body{padding:22px 16px 6px;display:flex;gap:16px;align-items:center;}
+  .scan{width:74px;height:74px;flex:0 0 auto;border-radius:50%;position:relative;border:1.5px solid rgba(67,232,200,.4);}
+  .scan::after{content:"";position:absolute;inset:9px;border-radius:50%;border:1px dashed rgba(67,232,200,.5);}
+  .scan::before{content:"";position:absolute;left:50%;top:8px;bottom:8px;width:1px;background:var(--glow);transform-origin:bottom center;animation:sweep 3.5s linear infinite;box-shadow:0 0 8px var(--glow);}
+  @keyframes sweep{from{transform:translateX(-50%) rotate(0deg);}to{transform:translateX(-50%) rotate(360deg);}}
+  .desig .lab{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate);}
+  .desig .nm{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--bone);line-height:1.05;margin-top:4px;}
+  .redaction{height:13px;background:#0a0f13;border-radius:1px;margin:14px 16px;}.redaction.r2{width:70%;}
+  .acquire{padding:0 16px 20px;}
+  .footnote{font-family:var(--mono);font-size:10px;color:var(--slate);letter-spacing:.06em;text-align:center;margin-top:26px;line-height:1.7;}
+  details.gm{margin-top:8px;}
+  details.gm summary{cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);list-style:none;padding:10px 0;border-top:1px solid var(--line);}
+  details.gm summary::-webkit-details-marker{display:none;}
+  details.gm summary::before{content:"▸ ";color:var(--glow);}details.gm[open] summary::before{content:"▾ ";}
+  .gm-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+  .modepill{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:4px 8px;border-radius:2px;border:1px solid var(--line);color:var(--slate);}
+  .modepill.proto{color:var(--gold);border-color:rgba(233,193,107,.4);}
+  .modepill.livem{color:var(--alert);border-color:rgba(240,101,78,.4);}
+  .center{text-align:center;}.spacer{height:6px;}
+  .big-win{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);text-align:center;line-height:1.05;}
+  .privacy{font-family:var(--mono);font-size:10px;color:#5d6e79;letter-spacing:.04em;text-align:center;margin-top:4px;}
+  .config-warn{background:rgba(240,101,78,.1);border:1px solid var(--alert);color:var(--alert);font-family:var(--mono);font-size:13px;padding:16px;border-radius:3px;line-height:1.7;}
+  .hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .rules-btn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;background:transparent;color:var(--glow);border:1px solid rgba(67,232,200,.4);border-radius:2px;}
+  .rules-btn:hover{background:rgba(67,232,200,.08);box-shadow:none;}
+  .rules-btn::before{content:"? ";opacity:.7;}
+  .overlay{position:fixed;inset:0;z-index:50;background:rgba(5,11,16,.82);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;}
+  .overlay[hidden]{display:none;}
+  .rules-card{position:relative;max-width:560px;width:100%;background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid rgba(67,232,200,.3);border-radius:3px;padding:26px 22px 30px;margin:auto;}
+  .rules-close{position:absolute;top:10px;right:12px;width:34px;height:34px;padding:0;font-size:22px;line-height:1;background:transparent;color:var(--slate);border:1px solid var(--line);border-radius:2px;}
+  .rules-close:hover{color:var(--bone);border-color:var(--glow);box-shadow:none;}
+  .rules-card .eyebrow{margin-bottom:2px;}
+  .rules-card h2{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 18px;}
+  .rule{display:flex;gap:14px;margin-bottom:16px;}
+  .rule .num{font-family:var(--display);font-weight:700;font-size:15px;color:#06241f;background:var(--glow);min-width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:2px;}
+  .rule .txt{font-size:14px;color:var(--bone);}
+  .rule .txt b{font-family:var(--display);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--glow);display:block;margin-bottom:3px;}
+  .rule .txt .sub{color:var(--slate);}
+  .rules-foot{font-family:var(--mono);font-size:11px;color:var(--slate);letter-spacing:.04em;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:6px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="reticle"><i class="h"></i><i class="b"></i><i class="l"></i><i class="r"></i></div>
+        <div><div class="title">Assassi<b>M</b></div><div class="subtitle">Field Operations Console</div></div>
+      </div>
+      <div class="hdr-right">
+        <div id="statusChip" class="chip">— — —</div>
+        <button id="rulesBtn" class="rules-btn">How to play</button>
+      </div>
+    </header>
+    <div id="view"></div>
+    <div class="footnote" id="footnote"></div>
+    <div class="privacy" id="privacyNote"></div>
+  </div>
+
+  <div id="rulesOverlay" class="overlay" hidden>
+    <div class="rules-card">
+      <button class="rules-close" id="rulesClose" aria-label="Close">&times;</button>
+      <div class="eyebrow">Field manual</div>
+      <h2>How to play</h2>
+
+      <div class="rule"><div class="num">1</div><div class="txt"><b>The objective</b>
+        Outlast everyone. You start with one secret target. Eliminate them, inherit their target, and keep hunting until you're the last agent standing.</div></div>
+
+      <div class="rule"><div class="num">2</div><div class="txt"><b>Your target</b>
+        When the game starts, your dossier shows one person's badge designation — visible only to you. That's your mark. Find them in the crowd. <span class="sub">No one else can see who you're hunting.</span></div></div>
+
+      <div class="rule"><div class="num">3</div><div class="txt"><b>Make the tag</b>
+        Tag your target using your group's agreed method (your game master will explain it at kickoff). Once you've tagged them, they hand over their badge name to you.</div></div>
+
+      <div class="rule"><div class="num">4</div><div class="txt"><b>Confirm the hit</b>
+        Type your target's badge name into your dossier and submit. <span class="sub">Only the exact name works, so there's no faking a kill from across the room.</span></div></div>
+
+      <div class="rule"><div class="num">5</div><div class="txt"><b>Inherit and continue</b>
+        The instant you confirm, your eliminated target's mark becomes your new target. Keep going without pause.</div></div>
+
+      <div class="rule"><div class="num">6</div><div class="txt"><b>Watch your back</b>
+        Someone out there has <i>you</i> as their target. Your badge name is your life — only reveal it when you've genuinely been tagged.</div></div>
+
+      <div class="rule"><div class="num">7</div><div class="txt"><b>Win</b>
+        When the chain loops all the way back and you're the only agent left in play, the operation closes and the victory is yours.</div></div>
+
+      <div class="rules-foot">
+        Eliminated? In the live game you're out for good — stay and watch the leaderboard. In a practice round, you may be able to rejoin.<br>
+        Fair play: keep your target secret, never fake a hit, and hand over your badge name honestly when you're caught.
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const TOKEN_KEY = 'assassim_token';
+  let token = localStorage.getItem(TOKEN_KEY) || null;
+  let gmCode = null;          // held in memory for the session only
+  let gmRoster = null;
+  let state = null;
+  let flash = null;
+  let lastSig = '';
+  let db = null;
+
+  const esc = s => (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---------- supabase calls ----------
+  async function rpc(fn, args){
+    try{
+      const { data, error } = await db.rpc(fn, args);
+      if(error){ return { ok:false, error: 'Connection problem: ' + error.message }; }
+      return data;
+    }catch(e){ return { ok:false, error:'Network error. Check your connection and try again.' }; }
+  }
+
+  async function loadState(){
+    if(!token){ state = null; return; }
+    const r = await rpc('am_state', { p_token: token });
+    if(r && r.ok){
+      if(!r.registered){ // game was reset / token no longer valid -> back to registration
+        localStorage.removeItem(TOKEN_KEY); token = null; state = null; return;
+      }
+      state = r;
+    }
+  }
+
+  function sig(){
+    if(!token) return 'register';
+    if(!state) return 'loading';
+    const lb = (state.leaderboard||[]).map(p=>p.name+p.alive+p.kills).join('|');
+    return [state.status,state.mode,state.me.alive,state.me.kills,state.target,state.winner,lb].join('~');
+  }
+
+  // ---------- render ----------
+  function setChip(){
+    const c=document.getElementById('statusChip');
+    const fn=document.getElementById('footnote');
+    const pn=document.getElementById('privacyNote');
+    const s = state ? state.status : 'lobby';
+    if(s==='active'){ c.className='chip live'; c.textContent='Operation Live'; }
+    else if(s==='ended'){ c.className='chip'; c.style.color='var(--gold)'; c.textContent='Operation Closed'; }
+    else { c.className='chip'; c.style.color=''; c.textContent='Briefing Room'; }
+    fn.innerHTML = "Confirm a hit by entering your target's <b>badge designation</b> — the name on their badge, which they hand over when you tag them.";
+    pn.textContent = state ? ('Mode: '+state.mode) : '';
+  }
+
+  function render(force){
+    const s = sig();
+    const typing = document.activeElement && /INPUT/.test(document.activeElement.tagName);
+    if(!force && s===lastSig) return;
+    if(!force && typing) return;
+    lastSig = s;
+    setChip();
+    const v = document.getElementById('view');
+
+    if(!SUPABASE_URL || SUPABASE_URL.startsWith('PASTE')){ v.innerHTML = configView(); return; }
+    if(!token){ v.innerHTML = registerView(); wire(); return; }
+    if(!state){ v.innerHTML = '<div class="panel center"><p class="lede" style="margin:0">Connecting…</p></div>'; return; }
+
+    if(state.status==='lobby'){ v.innerHTML = lobbyView(); wire(); return; }
+    if(state.status==='ended'){ v.innerHTML = endedView(); wire(); return; }
+    v.innerHTML = state.me.alive ? aliveView() : deadView();
+    wire();
+  }
+
+  function flashMsg(){ if(!flash) return ''; return `<div class="msg ${flash.type==='err'?'err':'ok'}">${esc(flash.text)}</div>`; }
+
+  function configView(){
+    return `<div class="config-warn">⚙ Setup needed: open this file and paste your Supabase Project URL and anon key into the SETUP block at the top, then re-deploy. The join code and game-master code are set in the SQL file.</div>`;
+  }
+
+  function registerView(){
+    return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="eyebrow">Check in</div>
+      <h2 class="phead">Register for the hunt</h2>
+      <p class="lede">Enter the join code from your game master, then your details. Your <b>badge name</b> is your secret code — it's how others confirm a hit on you, so enter it exactly as printed on your badge.</p>
+      <label class="fld" for="rCode">Join code</label>
+      <input type="text" id="rCode" placeholder="From your game master" autocomplete="off" />
+      <label class="fld" for="rName">Your real name</label>
+      <input type="text" id="rName" placeholder="First and last" autocomplete="name" />
+      <label class="fld" for="rEmail">Email</label>
+      <input type="email" id="rEmail" placeholder="So the game masters can reach you" autocomplete="email" />
+      <label class="fld" for="rBadge">Badge name (your secret code)</label>
+      <input type="text" id="rBadge" placeholder="Exactly as on your badge" autocomplete="off" />
+      <button class="block" id="regBtn">Check in</button>
+      ${flashMsg()}
+    </div>`;
+  }
+
+  function lobbyView(){
+    const lb = state.leaderboard||[];
+    return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="eyebrow">Briefing room</div>
+      <h2 class="phead">You're checked in</h2>
+      <p class="lede">Standing by as <b style="color:var(--glow)">${esc(state.me.name)}</b>. Targets are issued when the game master starts the operation.</p>
+      <div class="count">${lb.length}<small>Agents on roster</small></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Roster</div><h2 class="phead">Checked in</h2>
+      <div class="roster">${lb.map(p=>`<div class="pill"><span class="nm">${esc(p.name)}</span></div>`).join('')}</div>
+      ${gmPanel()}
+    </div>`;
+  }
+
+  function aliveView(){
+    return `<div class="dossier">
+      <div class="bar"><span class="lab">● Target Dossier</span><span class="file">CLASSIFIED</span></div>
+      <div class="body"><div class="scan"></div>
+        <div class="desig"><div class="lab">Designation</div><div class="nm">${esc(state.target||'—')}</div></div></div>
+      <div class="redaction"></div><div class="redaction r2"></div>
+      <div class="acquire">
+        <label class="fld" for="killIn">Confirm hit — enter target's badge name</label>
+        <input type="text" id="killIn" placeholder="Type the designation exactly" autocomplete="off" />
+        <button class="block" id="killBtn">Register elimination</button>
+        ${flashMsg()}
+      </div>
+    </div>${scoreboard()}`;
+  }
+
+  function deadView(){
+    const proto = state.mode==='prototype';
+    return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="eyebrow" style="color:var(--alert)">Status — Eliminated</div>
+      <h2 class="phead" style="color:var(--alert)">You're out of play</h2>
+      <p class="lede">Taken down${state.me.eliminated_by?` by <b style="color:var(--bone)">${esc(state.me.eliminated_by)}</b>`:''}. ${proto?'Prototype mode is on — you can jump back in to keep testing.':'Stay and watch the board: last agent standing wins.'}</p>
+      ${proto?`<button class="block" id="rejoinBtn">Rejoin the hunt</button>`:''}
+      ${flashMsg()}
+    </div>${scoreboard()}`;
+  }
+
+  function endedView(){
+    const lb=[...(state.leaderboard||[])].sort((a,b)=>b.kills-a.kills);
+    return `<div class="panel center"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="eyebrow center">Operation closed — sole survivor</div><div class="spacer"></div>
+      <div class="big-win">${esc(state.winner||'—')}</div>
+    </div>
+    <div class="panel"><div class="eyebrow">Final tally</div><h2 class="phead">Leaderboard</h2>
+      <div class="roster">${lb.map(boardRow).join('')}</div>${gmPanel()}</div>`;
+  }
+
+  function scoreboard(){
+    const lb=state.leaderboard||[]; const alive=lb.filter(p=>p.alive).length;
+    return `<div class="panel">
+      <div style="display:flex;gap:20px;align-items:flex-end;justify-content:space-between;margin-bottom:14px">
+        <div class="count">${alive}<small>Still in play</small></div>
+        <div style="text-align:right"><div class="count" style="font-size:30px;color:var(--gold)">${state.me.kills}<small>Your eliminations</small></div></div>
+      </div>
+      <div class="eyebrow">Leaderboard</div>
+      <div class="roster" style="margin-top:8px">${lb.map(boardRow).join('')}</div>${gmPanel()}</div>`;
+  }
+
+  function boardRow(p){
+    const meName = state && state.me ? state.me.name : null;
+    return `<div class="pill ${p.alive?'':'dead'} ${p.name===meName?'me':''}">
+      <span class="nm"><span class="status-dot ${p.alive?'alive':'out'}"></span>${esc(p.name)}${p.name===meName?' · you':''}</span>
+      <span class="meta2"><span class="kc">${p.kills}</span> ✕ ${p.alive?'active':'down'}</span></div>`;
+  }
+
+  // ---------- game master ----------
+  function gmPanel(){
+    const st = state ? state.status : 'lobby';
+    let inner;
+    if(!gmCode){
+      inner = `<label class="fld" for="gmIn">Game master code</label>
+        <input type="text" id="gmIn" placeholder="Enter to unlock controls" autocomplete="off" />
+        <button class="sm" id="gmAuthBtn" style="margin-top:10px">Unlock</button>`;
+    } else {
+      const modeBadge = state ? `<span class="modepill ${state.mode==='prototype'?'proto':'livem'}">${state.mode} mode</span>` : '';
+      let roster='';
+      if(gmRoster){
+        const emails=gmRoster.map(p=>p.email).join(', ');
+        roster = `<div class="eyebrow" style="margin-top:14px">Roster &amp; contacts ${modeBadge}</div>
+          <div class="gm-actions"><button class="sm ghost" id="copyEmails">Copy all emails</button>
+          <a href="mailto:?bcc=${encodeURIComponent(emails)}"><button class="sm ghost">Email everyone (BCC)</button></a></div>
+          <div class="roster">${gmRoster.map(p=>`<div class="pill ${p.alive?'':'dead'}">
+            <span class="nm">${esc(p.name)}<br><span class="meta2">${esc(p.email)} · badge: ${esc(p.badge)}${p.target?' · →'+esc(p.target):''}</span></span>
+            <span style="display:flex;gap:6px">
+              <span class="meta2"><span class="kc">${p.kills}</span>✕</span>
+              ${p.alive && st==='active' ? `<button class="sm danger" data-elim="${p.id}">Out</button>`:''}
+              ${st==='lobby' ? `<button class="sm danger" data-remove="${p.id}">Remove</button>`:''}
+            </span></div>`).join('')}</div>`;
+      }
+      inner = `<div class="gm-actions">
+          ${st==='lobby'?`<button class="sm" id="startBtn">Start operation</button>`:''}
+          <button class="sm ghost" id="modeBtn">Switch to ${state && state.mode==='prototype'?'LIVE':'PROTOTYPE'}</button>
+          <button class="sm ghost" id="refreshRoster">${gmRoster?'Refresh roster':'Show roster + contacts'}</button>
+          <button class="sm danger" id="resetBtn">Reset / clear all</button>
+          <button class="sm ghost" id="gmLock">Lock</button>
+        </div>${roster}${flashMsg()}`;
+    }
+    return `<details class="gm"><summary>Game master controls</summary>${inner}</details>`;
+  }
+
+  // ---------- wiring ----------
+  function wire(){
+    const $=id=>document.getElementById(id);
+    const after=async()=>{ await loadState(); if(gmCode) await refreshRoster(); render(true); };
+
+    const rb=$('regBtn');
+    if(rb){ const go=async()=>{ flash=null;
+        const r=await rpc('am_join',{p_code:$('rCode').value,p_name:$('rName').value,p_email:$('rEmail').value,p_badge:$('rBadge').value});
+        if(r.ok){ token=r.token; localStorage.setItem(TOKEN_KEY,token); flash=null; }
+        else flash={type:'err',text:r.error};
+        await after(); };
+      rb.onclick=go; }
+
+    const kb=$('killBtn');
+    if(kb){ const go=async()=>{ flash=null;
+        const r=await rpc('am_kill',{p_token:token,p_guess:$('killIn').value});
+        if(r.ok) flash={type:'ok',text:r.ended?`${r.eliminated} eliminated — you're the last agent standing.`:`Confirmed: ${r.eliminated} eliminated. New target below.`};
+        else flash={type:'err',text:r.error};
+        await after(); };
+      kb.onclick=go; const ki=$('killIn'); if(ki) ki.onkeydown=e=>{if(e.key==='Enter')go();}; }
+
+    const rj=$('rejoinBtn');
+    if(rj){ rj.onclick=async()=>{ flash=null; const r=await rpc('am_rejoin',{p_token:token}); if(!r.ok) flash={type:'err',text:r.error}; await after(); }; }
+
+    const ga=$('gmAuthBtn');
+    if(ga){ ga.onclick=async()=>{ const code=$('gmIn').value.trim(); if(!code) return;
+        const r=await rpc('am_gm_roster',{p_gm:code});
+        if(r.ok){ gmCode=code; gmRoster=r.roster; flash=null; }
+        else flash={type:'err',text:r.error};
+        render(true); document.querySelector('details.gm').open=true; }; }
+
+    const sb=$('startBtn');
+    if(sb){ sb.onclick=async()=>{ if(!confirm('Start the operation and issue targets to everyone?'))return;
+        const r=await rpc('am_gm_start',{p_gm:gmCode}); flash=r.ok?{type:'ok',text:`Operation started with ${r.players} agents.`}:{type:'err',text:r.error}; await after(); keepGmOpen(); }; }
+
+    const mb=$('modeBtn');
+    if(mb){ mb.onclick=async()=>{ const next=state.mode==='prototype'?'live':'prototype';
+        const r=await rpc('am_gm_set_mode',{p_gm:gmCode,p_mode:next}); flash=r.ok?{type:'ok',text:`Mode set to ${next}.`}:{type:'err',text:r.error}; await after(); keepGmOpen(); }; }
+
+    const rr=$('refreshRoster');
+    if(rr){ rr.onclick=async()=>{ await refreshRoster(); render(true); keepGmOpen(); }; }
+
+    const cp=$('copyEmails');
+    if(cp){ cp.onclick=()=>{ const emails=(gmRoster||[]).map(p=>p.email).join(', '); navigator.clipboard?.writeText(emails); flash={type:'ok',text:'Emails copied to clipboard.'}; render(true); keepGmOpen(); }; }
+
+    const reset=$('resetBtn');
+    if(reset){ reset.onclick=async()=>{ if(!confirm('Clear ALL players and return to the briefing room? Use this between the prototype test and the real game.'))return;
+        const r=await rpc('am_gm_reset',{p_gm:gmCode}); flash=r.ok?{type:'ok',text:'Game cleared. Everyone can re-register.'}:{type:'err',text:r.error};
+        // our own token is now invalid; reset to registration but keep gm session
+        await after(); keepGmOpen(); }; }
+
+    const lock=$('gmLock');
+    if(lock){ lock.onclick=()=>{ gmCode=null; gmRoster=null; render(true); }; }
+
+    document.querySelectorAll('[data-elim]').forEach(el=>el.onclick=async()=>{
+      if(!confirm('Mark this player as eliminated?'))return;
+      const r=await rpc('am_gm_eliminate',{p_gm:gmCode,p_id:el.getAttribute('data-elim')});
+      if(!r.ok) flash={type:'err',text:r.error}; await after(); keepGmOpen(); });
+    document.querySelectorAll('[data-remove]').forEach(el=>el.onclick=async()=>{
+      if(!confirm('Remove this player from the roster?'))return;
+      const r=await rpc('am_gm_remove',{p_gm:gmCode,p_id:el.getAttribute('data-remove')});
+      if(!r.ok) flash={type:'err',text:r.error}; await after(); keepGmOpen(); });
+  }
+  function keepGmOpen(){ const d=document.querySelector('details.gm'); if(d) d.open=true; }
+  async function refreshRoster(){ if(!gmCode) return; const r=await rpc('am_gm_roster',{p_gm:gmCode}); if(r.ok) gmRoster=r.roster; }
+
+  // ---------- boot ----------
+  (function wireRules(){
+    const ov=document.getElementById('rulesOverlay');
+    document.getElementById('rulesBtn').onclick=()=>{ ov.hidden=false; };
+    document.getElementById('rulesClose').onclick=()=>{ ov.hidden=true; };
+    ov.onclick=(e)=>{ if(e.target===ov) ov.hidden=true; };
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') ov.hidden=true; });
+  })();
+
+  (async function(){
+    if(SUPABASE_URL && !SUPABASE_URL.startsWith('PASTE')){
+      db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    render(true);
+    if(db){
+      await loadState(); render(true);
+      setInterval(async()=>{ await loadState(); if(gmCode) await refreshRoster(); render(false); }, 3000);
+    }
+  })();
+</script>
+</body>
+</html>
