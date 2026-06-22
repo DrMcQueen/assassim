@@ -9,8 +9,8 @@
 <!-- ============================================================
      SETUP — fill in these two values from your Supabase project
      (Project Settings  ->  API):
-       SUPABASE_URL       = https://gjzinzlegjjcziwtxuwo.supabase.co
-       SUPABASE_ANON_KEY  = sb_publishable_OyAkr3NMVYNzolgI8FTMHg_oCHD9MNY
+       SUPABASE_URL       = your Project URL
+       SUPABASE_ANON_KEY  = your anon / public key
      The join code and game-master code live in the DATABASE
      (set them in the SQL file), never here.
      ============================================================ -->
@@ -24,15 +24,25 @@
   :root{
     --ink:#0B1620;--ink2:#101F2B;--ink3:#162937;--line:rgba(120,200,210,.12);
     --glow:#43E8C8;--glow-dim:#2bbfa6;--alert:#F0654E;--bone:#ECE7D9;--slate:#8295A2;--gold:#E9C16B;
+    --accent-rgb:67,232,200;--alert-rgb:240,101,78;--gold-rgb:233,193,107;--on-accent:#06241f;
     --display:'Oswald','Arial Narrow',system-ui,sans-serif;
     --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
     --body:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   }
+  :root[data-theme="light"]{
+    --ink:#E7E3D6;--ink2:#F4F1E8;--ink3:#FBF9F2;--line:rgba(28,55,62,.18);
+    --glow:#0E8C7C;--glow-dim:#0b7466;--alert:#C23A26;--bone:#1B2932;--slate:#54656F;--gold:#9A6F1C;
+    --accent-rgb:14,140,124;--alert-rgb:194,58,38;--gold-rgb:154,111,28;--on-accent:#FFFFFF;
+  }
+  /* cinematic overlays + the dossier stay dark in both themes — lock their full palette */
+  .fx,.code-card,.dossier{--ink:#0B1620;--ink2:#101F2B;--ink3:#162937;--line:rgba(120,200,210,.12);
+    --bone:#ECE7D9;--slate:#8295A2;--gold:#E9C16B;--alert:#F0654E;
+    --accent-rgb:67,232,200;--alert-rgb:240,101,78;--gold-rgb:233,193,107;}
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:radial-gradient(1200px 600px at 80% -10%, rgba(67,232,200,.07), transparent 60%),
-               radial-gradient(900px 500px at -10% 110%, rgba(240,101,78,.06), transparent 55%), var(--ink);
+    background:radial-gradient(1200px 600px at 80% -10%, rgba(var(--accent-rgb),.07), transparent 60%),
+               radial-gradient(900px 500px at -10% 110%, rgba(var(--alert-rgb),.06), transparent 55%), var(--ink);
     color:var(--bone);font-family:var(--body);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
   }
   body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -42,7 +52,7 @@
   .brand{display:flex;align-items:center;gap:12px;min-width:0;}
   .reticle{width:34px;height:34px;flex:0 0 auto;position:relative;}
   .reticle::before,.reticle::after{content:"";position:absolute;inset:0;border-radius:50%;}
-  .reticle::before{border:1.5px solid var(--glow);box-shadow:0 0 14px rgba(67,232,200,.5);opacity:.9;}
+  .reticle::before{border:1.5px solid var(--glow);box-shadow:0 0 14px rgba(var(--accent-rgb),.5);opacity:.9;}
   .reticle::after{inset:11px;background:var(--glow);box-shadow:0 0 10px var(--glow);}
   .reticle i{position:absolute;background:var(--glow);opacity:.8;}
   .reticle i.h{left:50%;top:-5px;width:1.5px;height:8px;transform:translateX(-50%);}
@@ -53,7 +63,7 @@
   .title b{color:var(--glow);}
   .subtitle{font-family:var(--mono);font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--slate);margin-top:3px;}
   .chip{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--line);border-radius:2px;color:var(--slate);white-space:nowrap;}
-  .chip.live{color:var(--glow);border-color:rgba(67,232,200,.4);}
+  .chip.live{color:var(--glow);border-color:rgba(var(--accent-rgb),.4);}
   .chip.live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow);margin-right:6px;vertical-align:middle;animation:pulse 1.6s infinite;}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .panel{background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid var(--line);border-radius:3px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
@@ -65,37 +75,37 @@
   p.lede{color:var(--slate);font-size:14px;margin:0 0 16px;}
   label.fld{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin:14px 0 7px;}
   input[type=text],input[type=email]{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:2px;color:var(--bone);font-family:var(--mono);font-size:16px;letter-spacing:.04em;padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;}
-  input:focus{border-color:var(--glow);box-shadow:0 0 0 3px rgba(67,232,200,.12);}
+  input:focus{border-color:var(--glow);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.12);}
   input::placeholder{color:#4a5a66;}
-  button{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;border:1px solid var(--glow);background:var(--glow);color:#06241f;font-size:14px;padding:13px 18px;transition:transform .08s,box-shadow .15s,background .15s;}
-  button:hover{box-shadow:0 0 18px rgba(67,232,200,.35);}
+  button{font-family:var(--display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:2px;border:1px solid var(--glow);background:var(--glow);color:var(--on-accent);font-size:14px;padding:13px 18px;transition:transform .08s,box-shadow .15s,background .15s;}
+  button:hover{box-shadow:0 0 18px rgba(var(--accent-rgb),.35);}
   button:active{transform:translateY(1px);}
   button.block{width:100%;margin-top:18px;}
-  button.ghost{background:transparent;color:var(--glow);}button.ghost:hover{background:rgba(67,232,200,.08);}
-  button.danger{background:transparent;border-color:rgba(240,101,78,.5);color:var(--alert);}button.danger:hover{background:rgba(240,101,78,.1);box-shadow:none;}
+  button.ghost{background:transparent;color:var(--glow);}button.ghost:hover{background:rgba(var(--accent-rgb),.08);}
+  button.danger{background:transparent;border-color:rgba(var(--alert-rgb),.5);color:var(--alert);}button.danger:hover{background:rgba(var(--alert-rgb),.1);box-shadow:none;}
   button.sm{font-size:11px;padding:8px 12px;}
   button:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
   .msg{font-family:var(--mono);font-size:12px;letter-spacing:.04em;margin-top:14px;padding:10px 12px;border-radius:2px;border:1px solid;}
-  .msg.err{color:var(--alert);border-color:rgba(240,101,78,.4);background:rgba(240,101,78,.07);}
-  .msg.ok{color:var(--glow);border-color:rgba(67,232,200,.4);background:rgba(67,232,200,.07);}
+  .msg.err{color:var(--alert);border-color:rgba(var(--alert-rgb),.4);background:rgba(var(--alert-rgb),.07);}
+  .msg.ok{color:var(--glow);border-color:rgba(var(--accent-rgb),.4);background:rgba(var(--accent-rgb),.07);}
   .roster{display:flex;flex-direction:column;gap:8px;}
   .pill{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:2px;padding:11px 14px;}
   .pill .nm{font-family:var(--mono);font-size:14px;letter-spacing:.03em;}
   .pill .meta2{font-family:var(--mono);font-size:11px;color:var(--slate);letter-spacing:.06em;}
   .pill.dead{opacity:.5;}.pill.dead .nm{text-decoration:line-through;text-decoration-color:var(--alert);}
-  .pill.me{border-color:rgba(67,232,200,.4);}
+  .pill.me{border-color:rgba(var(--accent-rgb),.4);}
   .status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:7px;vertical-align:middle;}
   .status-dot.alive{background:var(--glow);box-shadow:0 0 7px var(--glow);}.status-dot.out{background:var(--alert);}
   .kc{color:var(--gold);}
   .count{font-family:var(--display);font-size:46px;font-weight:700;letter-spacing:.04em;line-height:1;}
   .count small{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);display:block;margin-top:6px;}
-  .dossier{background:linear-gradient(180deg,#13283450,#0b1620);border:1px solid rgba(67,232,200,.3);border-radius:3px;overflow:hidden;position:relative;margin-bottom:16px;}
-  .dossier .bar{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:rgba(67,232,200,.06);border-bottom:1px solid rgba(67,232,200,.18);}
+  .dossier{background:linear-gradient(180deg,#13283450,#0b1620);border:1px solid rgba(var(--accent-rgb),.3);border-radius:3px;overflow:hidden;position:relative;margin-bottom:16px;}
+  .dossier .bar{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:rgba(var(--accent-rgb),.06);border-bottom:1px solid rgba(var(--accent-rgb),.18);}
   .dossier .bar .lab{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--glow);}
   .dossier .bar .file{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--slate);}
   .dossier .body{padding:22px 16px 6px;display:flex;gap:16px;align-items:center;}
-  .scan{width:74px;height:74px;flex:0 0 auto;border-radius:50%;position:relative;border:1.5px solid rgba(67,232,200,.4);}
-  .scan::after{content:"";position:absolute;inset:9px;border-radius:50%;border:1px dashed rgba(67,232,200,.5);}
+  .scan{width:74px;height:74px;flex:0 0 auto;border-radius:50%;position:relative;border:1.5px solid rgba(var(--accent-rgb),.4);}
+  .scan::after{content:"";position:absolute;inset:9px;border-radius:50%;border:1px dashed rgba(var(--accent-rgb),.5);}
   .scan::before{content:"";position:absolute;left:50%;top:8px;bottom:8px;width:1px;background:var(--glow);transform-origin:bottom center;animation:sweep 3.5s linear infinite;box-shadow:0 0 8px var(--glow);}
   @keyframes sweep{from{transform:translateX(-50%) rotate(0deg);}to{transform:translateX(-50%) rotate(360deg);}}
   .desig .lab{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--slate);}
@@ -109,29 +119,84 @@
   details.gm summary::before{content:"▸ ";color:var(--glow);}details.gm[open] summary::before{content:"▾ ";}
   .gm-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
   .modepill{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:4px 8px;border-radius:2px;border:1px solid var(--line);color:var(--slate);}
-  .modepill.proto{color:var(--gold);border-color:rgba(233,193,107,.4);}
-  .modepill.livem{color:var(--alert);border-color:rgba(240,101,78,.4);}
+  .modepill.proto{color:var(--gold);border-color:rgba(var(--gold-rgb),.4);}
+  .modepill.livem{color:var(--alert);border-color:rgba(var(--alert-rgb),.4);}
   .center{text-align:center;}.spacer{height:6px;}
   .big-win{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);text-align:center;line-height:1.05;}
   .privacy{font-family:var(--mono);font-size:10px;color:#5d6e79;letter-spacing:.04em;text-align:center;margin-top:4px;}
-  .config-warn{background:rgba(240,101,78,.1);border:1px solid var(--alert);color:var(--alert);font-family:var(--mono);font-size:13px;padding:16px;border-radius:3px;line-height:1.7;}
+  .byline{text-align:center;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#6b7a85;line-height:1.9;}
+  .byline .quote{color:var(--bone);font-style:italic;}
+  .byline .name{color:var(--bone);}
+  .byline .brand{color:var(--glow);}
+  .config-warn{background:rgba(var(--alert-rgb),.1);border:1px solid var(--alert);color:var(--alert);font-family:var(--mono);font-size:13px;padding:16px;border-radius:3px;line-height:1.7;}
   .hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
-  .rules-btn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;background:transparent;color:var(--glow);border:1px solid rgba(67,232,200,.4);border-radius:2px;}
-  .rules-btn:hover{background:rgba(67,232,200,.08);box-shadow:none;}
+  .hdr-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;}
+  .icon-btn{font-size:13px;line-height:1;padding:6px 9px;background:transparent;color:var(--bone);border:1px solid var(--line);border-radius:2px;}
+  .icon-btn:hover{border-color:var(--glow);box-shadow:none;}
+  .rules-btn{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:6px 10px;background:transparent;color:var(--glow);border:1px solid rgba(var(--accent-rgb),.4);border-radius:2px;}
+  .rules-btn:hover{background:rgba(var(--accent-rgb),.08);box-shadow:none;}
   .rules-btn::before{content:"? ";opacity:.7;}
+  .code-btn{color:var(--gold);border-color:rgba(var(--gold-rgb),.45);}
+  .code-btn::before{content:"\01F511 ";opacity:.9;}
+  .code-btn:hover{background:rgba(var(--gold-rgb),.1);}
+  .code-card{position:relative;max-width:440px;width:100%;background:linear-gradient(180deg,#1c2a1a,#0b1620);border:1px solid rgba(var(--gold-rgb),.4);border-radius:3px;padding:30px 22px 32px;margin:auto;text-align:center;}
+  .code-card .eyebrow{margin-bottom:6px;}
+  .code-card .codeword{font-family:var(--display);font-weight:700;font-size:54px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);line-height:1;margin:14px 0 18px;text-shadow:0 0 22px rgba(var(--gold-rgb),.35);word-break:break-word;}
+  .code-card .hint{font-family:var(--mono);font-size:12px;color:var(--slate);letter-spacing:.04em;line-height:1.7;}
+  .code-card .hint b{color:var(--bone);}
   .overlay{position:fixed;inset:0;z-index:50;background:rgba(5,11,16,.82);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;}
   .overlay[hidden]{display:none;}
-  .rules-card{position:relative;max-width:560px;width:100%;background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid rgba(67,232,200,.3);border-radius:3px;padding:26px 22px 30px;margin:auto;}
+  .rules-card{position:relative;max-width:560px;width:100%;background:linear-gradient(180deg,var(--ink2),var(--ink));border:1px solid rgba(var(--accent-rgb),.3);border-radius:3px;padding:26px 22px 30px;margin:auto;}
   .rules-close{position:absolute;top:10px;right:12px;width:34px;height:34px;padding:0;font-size:22px;line-height:1;background:transparent;color:var(--slate);border:1px solid var(--line);border-radius:2px;}
   .rules-close:hover{color:var(--bone);border-color:var(--glow);box-shadow:none;}
   .rules-card .eyebrow{margin-bottom:2px;}
   .rules-card h2{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.1em;text-transform:uppercase;margin:0 0 18px;}
   .rule{display:flex;gap:14px;margin-bottom:16px;}
-  .rule .num{font-family:var(--display);font-weight:700;font-size:15px;color:#06241f;background:var(--glow);min-width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:2px;}
+  .rule .num{font-family:var(--display);font-weight:700;font-size:15px;color:var(--on-accent);background:var(--glow);min-width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:2px;}
   .rule .txt{font-size:14px;color:var(--bone);}
   .rule .txt b{font-family:var(--display);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--glow);display:block;margin-bottom:3px;}
   .rule .txt .sub{color:var(--slate);}
   .rules-foot{font-family:var(--mono);font-size:11px;color:var(--slate);letter-spacing:.04em;line-height:1.8;border-top:1px solid var(--line);padding-top:14px;margin-top:6px;}
+  /* ---- FX: caught + fireworks ---- */
+  .fx{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+  .fx[hidden]{display:none;}
+  .fx-caught{pointer-events:none;}
+  .fx-caught .veil{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(var(--alert-rgb),0) 28%, rgba(120,16,10,.9) 100%), rgba(8,3,3,.55);}
+  .fx-caught.run{animation:fxOut .5s ease-in 1.7s forwards;}
+  .fx-caught.run .veil{animation:veilIn .3s ease-out both;}
+  .fx-creticle{position:relative;width:120px;height:120px;margin-bottom:24px;}
+  .fx-creticle::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid var(--alert);box-shadow:0 0 30px rgba(var(--alert-rgb),.7),inset 0 0 20px rgba(var(--alert-rgb),.4);}
+  .fx-creticle::after{content:"";position:absolute;inset:46px;border-radius:50%;background:var(--alert);box-shadow:0 0 16px var(--alert);}
+  .fx-creticle i{position:absolute;background:var(--alert);box-shadow:0 0 8px var(--alert);}
+  .fx-creticle i.h{left:50%;top:-14px;width:3px;height:26px;transform:translateX(-50%);}
+  .fx-creticle i.b{left:50%;bottom:-14px;width:3px;height:26px;transform:translateX(-50%);}
+  .fx-creticle i.l{top:50%;left:-14px;height:3px;width:26px;transform:translateY(-50%);}
+  .fx-creticle i.r{top:50%;right:-14px;height:3px;width:26px;transform:translateY(-50%);}
+  .fx-caught.run .fx-creticle{animation:reticleSlam .55s cubic-bezier(.2,.9,.3,1.4) both;}
+  .fx-ctext{font-family:var(--display);font-weight:700;font-size:40px;letter-spacing:.1em;text-transform:uppercase;color:var(--alert);text-align:center;text-shadow:0 0 24px rgba(var(--alert-rgb),.6);position:relative;z-index:1;}
+  .fx-csub{font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#e9a89c;margin-top:10px;position:relative;z-index:1;}
+  .fx-caught.run .fx-ctext{animation:slamIn .45s ease-out .12s both, shake .4s ease-in-out .55s;}
+  .fx-caught.run .fx-csub{animation:slamIn .45s ease-out .3s both;}
+  @keyframes veilIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes reticleSlam{0%{transform:scale(2.7) rotate(-35deg);opacity:0;}60%{opacity:1;}100%{transform:scale(1) rotate(0);opacity:1;}}
+  @keyframes slamIn{0%{transform:scale(1.35);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-7px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(3px);}}
+  @keyframes fxOut{to{opacity:0;visibility:hidden;}}
+  .fx-fw{background:rgba(5,11,16,.55);cursor:pointer;}
+  .fx-fw canvas{position:absolute;inset:0;width:100%;height:100%;}
+  .fx-fwban{position:relative;z-index:1;text-align:center;animation:banIn .7s cubic-bezier(.2,.8,.3,1.2) both;padding:0 16px;}
+  .fx-fwban .eyebrow{margin-bottom:6px;}
+  .fx-fwban .who{font-family:var(--display);font-weight:700;font-size:clamp(38px,12vw,72px);letter-spacing:.05em;text-transform:uppercase;color:var(--gold);line-height:1;text-shadow:0 0 30px rgba(var(--gold-rgb),.5);word-break:break-word;}
+  .fx-fwban .sub{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--bone);margin-top:16px;opacity:.85;}
+  .fx-fwban .tap{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--slate);margin-top:22px;}
+  @keyframes banIn{0%{transform:scale(.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  @media (prefers-reduced-motion: reduce){
+    .fx-caught.run .fx-creticle,
+    .fx-caught.run .fx-ctext,
+    .fx-caught.run .fx-csub,
+    .fx-fwban{animation:calmIn .4s ease both !important;}
+  }
+  @keyframes calmIn{from{opacity:0;}to{opacity:1;}}
 </style>
 </head>
 <body>
@@ -143,12 +208,17 @@
       </div>
       <div class="hdr-right">
         <div id="statusChip" class="chip">— — —</div>
-        <button id="rulesBtn" class="rules-btn">How to play</button>
+        <div class="hdr-btns">
+          <button id="themeBtn" class="icon-btn" title="Toggle light / dark" aria-label="Toggle light or dark mode">🌙</button>
+          <button id="codeBtn" class="rules-btn code-btn" hidden>My code</button>
+          <button id="rulesBtn" class="rules-btn">How to play</button>
+        </div>
       </div>
     </header>
     <div id="view"></div>
     <div class="footnote" id="footnote"></div>
     <div class="privacy" id="privacyNote"></div>
+    <div class="byline">🦈 <span class="quote">&ldquo;Coded for my M friends, with love&rdquo;</span><br>~ <span class="name">Dr. Jaime McQueen</span> <span class="brand">(Atlantis Grey)</span></div>
   </div>
 
   <div id="rulesOverlay" class="overlay" hidden>
@@ -161,27 +231,53 @@
         Outlast everyone. You start with one secret target. Eliminate them, inherit their target, and keep hunting until you're the last agent standing.</div></div>
 
       <div class="rule"><div class="num">2</div><div class="txt"><b>Your target</b>
-        When the game starts, your dossier shows one person's badge designation — visible only to you. That's your mark. Find them in the crowd. <span class="sub">No one else can see who you're hunting.</span></div></div>
+        When the game starts, your dossier shows your target's badge name (big) and full name (underneath) — visible only to you. Use them to spot your mark in the crowd by matching their badge. <span class="sub">No one else can see who you're hunting.</span></div></div>
 
       <div class="rule"><div class="num">3</div><div class="txt"><b>Make the tag</b>
-        Tag your target using your group's agreed method (your game master will explain it at kickoff). Once you've tagged them, they hand over their badge name to you.</div></div>
+        Find your target and tag them using your group's agreed method (your game master explains it at kickoff). Once tagged, they open their <b>My Code</b> card and show you their secret code word.</div></div>
 
       <div class="rule"><div class="num">4</div><div class="txt"><b>Confirm the hit</b>
-        Type your target's badge name into your dossier and submit. <span class="sub">Only the exact name works, so there's no faking a kill from across the room.</span></div></div>
+        Type the secret code they showed you into your dossier and submit. <span class="sub">Only their exact code works, so there's no faking a kill from across the room.</span></div></div>
 
       <div class="rule"><div class="num">5</div><div class="txt"><b>Inherit and continue</b>
         The instant you confirm, your eliminated target's mark becomes your new target. Keep going without pause.</div></div>
 
       <div class="rule"><div class="num">6</div><div class="txt"><b>Watch your back</b>
-        Someone out there has <i>you</i> as their target. Your badge name is your life — only reveal it when you've genuinely been tagged.</div></div>
+        Someone out there has <i>you</i> as their target. Your secret code is your life — only reveal it (via the <b>My Code</b> button) when you've genuinely been tagged.</div></div>
 
       <div class="rule"><div class="num">7</div><div class="txt"><b>Win</b>
         When the chain loops all the way back and you're the only agent left in play, the operation closes and the victory is yours.</div></div>
 
       <div class="rules-foot">
         Eliminated? In the live game you're out for good — stay and watch the leaderboard. In a practice round, you may be able to rejoin.<br>
-        Fair play: keep your target secret, never fake a hit, and hand over your badge name honestly when you're caught.
+        Fair play: don't reveal your code unless you're truly tagged, and never fake a hit.
       </div>
+    </div>
+  </div>
+
+  <div id="codeOverlay" class="overlay" hidden>
+    <div class="code-card">
+      <button class="rules-close" id="codeClose" aria-label="Close">&times;</button>
+      <div class="eyebrow">Your secret code</div>
+      <div class="codeword" id="codeWord">—</div>
+      <div class="hint">When someone tags you, <b>show them this screen</b>.<br>They type this code to confirm the takedown.<br>Keep it hidden the rest of the time.</div>
+    </div>
+  </div>
+
+  <div id="fxCaught" class="fx fx-caught" hidden>
+    <div class="veil"></div>
+    <div class="fx-creticle"><i class="h"></i><i class="b"></i><i class="l"></i><i class="r"></i></div>
+    <div class="fx-ctext">You've Been Caught</div>
+    <div class="fx-csub">Target neutralized</div>
+  </div>
+
+  <div id="fxFw" class="fx fx-fw" hidden>
+    <canvas id="fxCanvas"></canvas>
+    <div class="fx-fwban">
+      <div class="eyebrow">Sole survivor</div>
+      <div class="who" id="fxFwName">—</div>
+      <div class="sub">Last agent standing — operation won</div>
+      <div class="tap">Tap anywhere to continue</div>
     </div>
   </div>
 
@@ -195,6 +291,7 @@
   let flash = null;
   let lastSig = '';
   let db = null;
+  let prevAlive = null, celebrated = false, caughtShown = false;
 
   const esc = s => (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -222,7 +319,7 @@
     if(!token) return 'register';
     if(!state) return 'loading';
     const lb = (state.leaderboard||[]).map(p=>p.name+p.alive+p.kills).join('|');
-    return [state.status,state.mode,state.me.alive,state.me.kills,state.target,state.winner,lb].join('~');
+    return [state.status,state.mode,state.me.alive,state.me.kills,state.me.secret,(state.target&&state.target.bold)||'',state.winner,lb].join('~');
   }
 
   // ---------- render ----------
@@ -234,8 +331,10 @@
     if(s==='active'){ c.className='chip live'; c.textContent='Operation Live'; }
     else if(s==='ended'){ c.className='chip'; c.style.color='var(--gold)'; c.textContent='Operation Closed'; }
     else { c.className='chip'; c.style.color=''; c.textContent='Briefing Room'; }
-    fn.innerHTML = "Confirm a hit by entering your target's <b>badge designation</b> — the name on their badge, which they hand over when you tag them.";
+    fn.innerHTML = "Confirm a hit by entering the <b>secret code</b> your target reveals when you tag them. Tap <b>My code</b> to show yours when you're caught.";
     pn.textContent = state ? ('Mode: '+state.mode) : '';
+    const cb=document.getElementById('codeBtn');
+    if(cb) cb.hidden = !(state && state.registered && state.me && state.me.secret);
   }
 
   function render(force){
@@ -267,15 +366,15 @@
     return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
       <div class="eyebrow">Check in</div>
       <h2 class="phead">Register for the hunt</h2>
-      <p class="lede">Enter the join code from your game master, then your details. Your <b>badge name</b> is your secret code — it's how others confirm a hit on you, so enter it exactly as printed on your badge.</p>
+      <p class="lede">Enter the join code from your game master, then your details. You'll be given a <b>secret code word</b> to reveal only when you're tagged.</p>
       <label class="fld" for="rCode">Join code</label>
       <input type="text" id="rCode" placeholder="From your game master" autocomplete="off" />
-      <label class="fld" for="rName">Your real name</label>
-      <input type="text" id="rName" placeholder="First and last" autocomplete="name" />
+      <label class="fld" for="rBold">Badge name (the big bold name on your badge)</label>
+      <input type="text" id="rBold" placeholder="e.g. Mac" autocomplete="off" />
+      <label class="fld" for="rFull">Full name</label>
+      <input type="text" id="rFull" placeholder="First and last" autocomplete="name" />
       <label class="fld" for="rEmail">Email</label>
       <input type="email" id="rEmail" placeholder="So the game masters can reach you" autocomplete="email" />
-      <label class="fld" for="rBadge">Badge name (your secret code)</label>
-      <input type="text" id="rBadge" placeholder="Exactly as on your badge" autocomplete="off" />
       <button class="block" id="regBtn">Check in</button>
       ${flashMsg()}
     </div>`;
@@ -286,7 +385,7 @@
     return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
       <div class="eyebrow">Briefing room</div>
       <h2 class="phead">You're checked in</h2>
-      <p class="lede">Standing by as <b style="color:var(--glow)">${esc(state.me.name)}</b>. Targets are issued when the game master starts the operation.</p>
+      <p class="lede">Standing by as <b style="color:var(--glow)">${esc(state.me.bold)}</b>. Targets are issued when the game master starts the operation. Tap <b>My code</b> up top to see the code you'll reveal when tagged.</p>
       <div class="count">${lb.length}<small>Agents on roster</small></div>
     </div>
     <div class="panel">
@@ -297,14 +396,17 @@
   }
 
   function aliveView(){
+    const t = state.target || {};
     return `<div class="dossier">
       <div class="bar"><span class="lab">● Target Dossier</span><span class="file">CLASSIFIED</span></div>
       <div class="body"><div class="scan"></div>
-        <div class="desig"><div class="lab">Designation</div><div class="nm">${esc(state.target||'—')}</div></div></div>
+        <div class="desig"><div class="lab">Your mark — find this badge</div>
+          <div class="nm">${esc(t.bold||'—')}</div>
+          ${t.full?`<div style="font-family:var(--mono);font-size:13px;color:var(--slate);letter-spacing:.06em;margin-top:6px">${esc(t.full)}</div>`:''}</div></div>
       <div class="redaction"></div><div class="redaction r2"></div>
       <div class="acquire">
-        <label class="fld" for="killIn">Confirm hit — enter target's badge name</label>
-        <input type="text" id="killIn" placeholder="Type the designation exactly" autocomplete="off" />
+        <label class="fld" for="killIn">Confirm hit — enter the secret code they show you</label>
+        <input type="text" id="killIn" placeholder="Their one-word code" autocomplete="off" />
         <button class="block" id="killBtn">Register elimination</button>
         ${flashMsg()}
       </div>
@@ -344,9 +446,8 @@
   }
 
   function boardRow(p){
-    const meName = state && state.me ? state.me.name : null;
-    return `<div class="pill ${p.alive?'':'dead'} ${p.name===meName?'me':''}">
-      <span class="nm"><span class="status-dot ${p.alive?'alive':'out'}"></span>${esc(p.name)}${p.name===meName?' · you':''}</span>
+    return `<div class="pill ${p.alive?'':'dead'} ${p.you?'me':''}">
+      <span class="nm"><span class="status-dot ${p.alive?'alive':'out'}"></span>${esc(p.name)}${p.you?' · you':''}</span>
       <span class="meta2"><span class="kc">${p.kills}</span> ✕ ${p.alive?'active':'down'}</span></div>`;
   }
 
@@ -388,11 +489,11 @@
   // ---------- wiring ----------
   function wire(){
     const $=id=>document.getElementById(id);
-    const after=async()=>{ await loadState(); if(gmCode) await refreshRoster(); render(true); };
+    const after=async()=>{ await loadState(); checkTransitions(); if(gmCode) await refreshRoster(); render(true); };
 
     const rb=$('regBtn');
     if(rb){ const go=async()=>{ flash=null;
-        const r=await rpc('am_join',{p_code:$('rCode').value,p_name:$('rName').value,p_email:$('rEmail').value,p_badge:$('rBadge').value});
+        const r=await rpc('am_join',{p_code:$('rCode').value,p_bold:$('rBold').value,p_full:$('rFull').value,p_email:$('rEmail').value});
         if(r.ok){ token=r.token; localStorage.setItem(TOKEN_KEY,token); flash=null; }
         else flash={type:'err',text:r.error};
         await after(); };
@@ -451,13 +552,92 @@
   function keepGmOpen(){ const d=document.querySelector('details.gm'); if(d) d.open=true; }
   async function refreshRoster(){ if(!gmCode) return; const r=await rpc('am_gm_roster',{p_gm:gmCode}); if(r.ok) gmRoster=r.roster; }
 
+  // ---------- celebratory / elimination FX ----------
+  function checkTransitions(){
+    if(!state || !state.registered || !state.me){ prevAlive=null; return; }
+    const meAlive = state.me.alive, st = state.status;
+    if(prevAlive===true && meAlive===false && !caughtShown){ caughtShown=true; playCaught(); }
+    if(meAlive===true) caughtShown=false;                       // re-arm for a later death (rejoin)
+    if(st==='ended' && meAlive===true && !celebrated){ celebrated=true; playFireworks(state.winner||state.me.bold); }
+    if(st!=='ended') celebrated=false;                          // re-arm for the next game
+    prevAlive = meAlive;
+  }
+
+  function playCaught(){
+    const ov=document.getElementById('fxCaught');
+    ov.hidden=false; ov.classList.remove('run'); void ov.offsetWidth; ov.classList.add('run');
+    setTimeout(()=>{ ov.hidden=true; ov.classList.remove('run'); }, 2300);
+  }
+
+  function playFireworks(name){
+    const ov=document.getElementById('fxFw');
+    document.getElementById('fxFwName').textContent = name || 'You';
+    ov.hidden=false;
+    let running=true, raf=null;
+    function stop(){ running=false; if(raf) cancelAnimationFrame(raf); ov.hidden=true; }
+    ov.onclick=stop;
+    const cv=document.getElementById('fxCanvas');
+    // Respect reduce-motion: skip the canvas entirely, just show the banner.
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce){ cv.style.display='none'; setTimeout(()=>{ if(running) stop(); }, 5000); return; }
+    cv.style.display='';
+    const ctx=cv.getContext('2d');
+    let W=cv.width=ov.clientWidth, H=cv.height=ov.clientHeight;
+    // soft, warm/cool palette — no pure white, reduced brightness
+    const colors=['#43E8C8','#E9C16B','#7BE0C8','#F0A56E','#6FB6C9'];
+    const MAXA=0.7;                       // cap particle brightness
+    let parts=[], rockets=[], t0=performance.now(), lastLaunch=0;
+    const launch=()=>{ if(rockets.length<2) rockets.push({x:60+Math.random()*(W-120), y:H, vy:-(5+Math.random()*2), tx:90+Math.random()*(H*0.38)}); };
+    const burst=(x,y)=>{ const c=colors[Math.random()*colors.length|0], n=24+Math.random()*14;
+      for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, sp=1+Math.random()*2.6; parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c}); } };
+    function frame(now){
+      if(!running) return;
+      ctx.fillStyle='rgba(5,11,16,0.32)'; ctx.fillRect(0,0,W,H);
+      if(now-lastLaunch>750){ launch(); lastLaunch=now; }     // gentle cadence — at most ~1 burst/0.75s, well under 3/sec
+      ctx.globalAlpha=MAXA*0.55; ctx.fillStyle='#cbb27a';
+      rockets.forEach(r=>{ r.y+=r.vy; ctx.fillRect(r.x,r.y,2,3); });
+      rockets=rockets.filter(r=>{ if(r.y<=r.tx){ burst(r.x,r.y); return false; } return true; });
+      parts.forEach(p=>{ p.vy+=0.035; p.x+=p.vx; p.y+=p.vy; p.life-=0.009; ctx.globalAlpha=Math.max(p.life,0)*MAXA; ctx.fillStyle=p.c; ctx.fillRect(p.x,p.y,3,3); });
+      ctx.globalAlpha=1; parts=parts.filter(p=>p.life>0);
+      if(now-t0<5200 || parts.length){ raf=requestAnimationFrame(frame); } else { stop(); }
+    }
+    launch(); lastLaunch=performance.now();
+    raf=requestAnimationFrame(frame);
+    setTimeout(()=>{ if(running) stop(); }, 7000);
+  }
+
   // ---------- boot ----------
   (function wireRules(){
+    // theme: restore saved choice (default dark), wire the toggle
+    const THEME_KEY='assassim_theme';
+    function applyTheme(t){
+      document.documentElement.setAttribute('data-theme', t);
+      try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+      const b=document.getElementById('themeBtn');
+      if(b){ b.textContent = (t==='light') ? '🌙' : '☀️'; b.title = (t==='light')?'Switch to dark':'Switch to light'; }
+    }
+    let saved='dark'; try{ saved=localStorage.getItem(THEME_KEY)||'dark'; }catch(e){}
+    applyTheme(saved);
+    document.getElementById('themeBtn').onclick=()=>{
+      const cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
+      applyTheme(cur==='light'?'dark':'light');
+    };
+
     const ov=document.getElementById('rulesOverlay');
     document.getElementById('rulesBtn').onclick=()=>{ ov.hidden=false; };
     document.getElementById('rulesClose').onclick=()=>{ ov.hidden=true; };
     ov.onclick=(e)=>{ if(e.target===ov) ov.hidden=true; };
-    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') ov.hidden=true; });
+
+    const cov=document.getElementById('codeOverlay');
+    document.getElementById('codeBtn').onclick=()=>{
+      const code = (state && state.me && state.me.secret) ? state.me.secret : '—';
+      document.getElementById('codeWord').textContent = code;
+      cov.hidden=false;
+    };
+    document.getElementById('codeClose').onclick=()=>{ cov.hidden=true; };
+    cov.onclick=(e)=>{ if(e.target===cov) cov.hidden=true; };
+
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ ov.hidden=true; cov.hidden=true; } });
   })();
 
   (async function(){
@@ -466,8 +646,8 @@
     }
     render(true);
     if(db){
-      await loadState(); render(true);
-      setInterval(async()=>{ await loadState(); if(gmCode) await refreshRoster(); render(false); }, 3000);
+      await loadState(); checkTransitions(); render(true);
+      setInterval(async()=>{ await loadState(); checkTransitions(); if(gmCode) await refreshRoster(); render(false); }, 3000);
     }
   })();
 </script>
