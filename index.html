@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>AssassiM — Field Operations Console</title>
+<title>AssassiM · Field Operations Console</title>
 
 <!-- ============================================================
      SETUP — fill in these two values from your Supabase project
@@ -197,6 +197,44 @@
     .fx-fwban{animation:calmIn .4s ease both !important;}
   }
   @keyframes calmIn{from{opacity:0;}to{opacity:1;}}
+  /* global elimination announcement */
+  .fx-elim{pointer-events:none;}
+  .fx-elim .veil{position:absolute;inset:0;background:radial-gradient(circle at center, rgba(240,101,78,0) 35%, rgba(60,12,8,.82) 100%), rgba(8,3,3,.5);}
+  .fx-elim.run{animation:fxOut .5s ease-in 2.0s forwards;}
+  .fx-elim.run .veil{animation:veilIn .3s ease-out both;}
+  .fx-elim .ering{position:relative;width:104px;height:104px;margin-bottom:16px;}
+  .fx-elim .ering::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--alert);box-shadow:0 0 22px rgba(240,101,78,.6);}
+  .fx-elim .ering i{position:absolute;background:var(--alert);}
+  .fx-elim .ering i.h{left:50%;top:-9px;width:2px;height:16px;transform:translateX(-50%);}
+  .fx-elim .ering i.b{left:50%;bottom:-9px;width:2px;height:16px;transform:translateX(-50%);}
+  .fx-elim .ering i.l{top:50%;left:-9px;height:2px;width:16px;transform:translateY(-50%);}
+  .fx-elim .ering i.r{top:50%;right:-9px;height:2px;width:16px;transform:translateY(-50%);}
+  .fx-elim .ghost{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:46px;}
+  .fx-elim.run .ghost{animation:ghostwiggle 1.3s ease-in-out infinite;}
+  .fx-elim.run .ering{animation:slamIn .5s ease-out both;}
+  .fx-elim .ebold{font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:.06em;text-transform:uppercase;color:var(--bone);text-align:center;line-height:1.05;position:relative;z-index:1;}
+  .fx-elim .efull{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--slate);margin-top:6px;position:relative;z-index:1;}
+  .fx-elim .eby{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--alert);margin-top:14px;text-transform:uppercase;position:relative;z-index:1;}
+  .fx-elim.run .ebold,.fx-elim.run .efull,.fx-elim.run .eby{animation:slamIn .45s ease-out .15s both;}
+  @keyframes ghostwiggle{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+  /* dancing sharks + champion full name on victory */
+  .fx-fwban .whofull{font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--bone);margin-top:10px;opacity:.92;}
+  .fx-sharks{font-size:38px;letter-spacing:8px;margin-top:18px;position:relative;z-index:1;}
+  .fx-sharks span{display:inline-block;animation:sharkdance 1.1s ease-in-out infinite;}
+  .fx-sharks span:nth-child(2){animation-delay:.16s;}
+  .fx-sharks span:nth-child(3){animation-delay:.32s;}
+  .fx-sharks span:nth-child(4){animation-delay:.48s;}
+  @keyframes sharkdance{0%,100%{transform:translateY(0) rotate(-7deg);}50%{transform:translateY(-9px) rotate(7deg);}}
+  /* tie crown buttons + rules sections */
+  .crownlist{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;}
+  .rsec{font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--glow);margin:20px 0 12px;}
+  .ritem{font-size:14px;color:var(--bone);margin-bottom:13px;line-height:1.5;}
+  .ritem b{font-family:var(--display);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--glow);}
+  .ritem .sub{color:var(--slate);}
+  @media (prefers-reduced-motion: reduce){
+    .fx-elim.run .ghost,.fx-elim.run .ering,.fx-elim.run .ebold,.fx-elim.run .efull,.fx-elim.run .eby,
+    .fx-sharks span{animation:calmIn .4s ease both !important;}
+  }
 </style>
 </head>
 <body>
@@ -227,30 +265,34 @@
       <div class="eyebrow">Field manual</div>
       <h2>How to play</h2>
 
-      <div class="rule"><div class="num">1</div><div class="txt"><b>The objective</b>
-        Outlast everyone. You start with one secret target. Eliminate them, inherit their target, and keep hunting until you're the last agent standing.</div></div>
+      <p class="lede" style="margin-top:0">Be safe and use common sense. This is just a game. We're all competitive, but it's in good fun, and nobody should get hurt, get in trouble, or have their AG ruined. 🦈</p>
 
-      <div class="rule"><div class="num">2</div><div class="txt"><b>Your target</b>
-        When the game starts, your dossier shows your target's badge name (big) and full name (underneath) — visible only to you. Use them to spot your mark in the crowd by matching their badge. <span class="sub">No one else can see who you're hunting.</span></div></div>
+      <div class="rsec">The Hunt</div>
+      <div class="rule"><div class="num">1</div><div class="txt"><b>Your target</b>
+        When the game starts, your dossier shows one person's badge name, exactly as printed on their AG badge (bold), and full real name. Only you can see it. Track them down. You may not trade or swap targets.</div></div>
+      <div class="rule"><div class="num">2</div><div class="txt"><b>Make the tag</b>
+        Get within touching distance (but do not touch anyone without their consent) and show them your screen with their exact name on it. Your target cannot dodge it: no closing eyes, no pretending not to look. Once you've got them, they open their <b>My Code</b> card and show their secret code. Accept your fate, no whining. 😉</div></div>
+      <div class="rule"><div class="num">3</div><div class="txt"><b>Confirm and score</b>
+        The tagger types that secret code into their dossier to confirm the elimination and score one point. They then inherit the target's target and keep hunting. Points stay banked; they remain yours even after you're eventually caught.</div></div>
+      <div class="rule"><div class="num">4</div><div class="txt"><b>Watch your back</b>
+        Someone out there has <i>you</i> as their target. Only open your code card once you've truly been tagged.</div></div>
 
-      <div class="rule"><div class="num">3</div><div class="txt"><b>Make the tag</b>
-        Find your target and tag them using your group's agreed method (your game master explains it at kickoff). Once tagged, they open their <b>My Code</b> card and show you their secret code word.</div></div>
+      <div class="rsec">Immunity and Courtesy</div>
+      <div class="ritem"><b>On the clock.</b> <span class="sub">You cannot be tagged while volunteering, speaking, or working a scheduled shift for the AG or a SIG, plus 10 minutes afterward. (Example: Alice and Bob are checking badges at Hospitality, so neither can be targeted until 10 minutes after their shift ends.)</span></div>
+      <div class="ritem"><b>Big events.</b> <span class="sub">Anyone physically at or standing in line for the Gala Dinner and Misster Mensa is safe for the whole event: no tagging or being tagged. (Camping the empty ballroom afterward will not save you.)</span></div>
+      <div class="ritem"><b>Don't disrupt.</b> <span class="sub">If a tag would interrupt a speaker, performance, or organized activity, wait until it wraps up.</span></div>
 
-      <div class="rule"><div class="num">4</div><div class="txt"><b>Confirm the hit</b>
-        Type the secret code they showed you into your dossier and submit. <span class="sub">Only their exact code works, so there's no faking a kill from across the room.</span></div></div>
+      <div class="rsec">When and How Long</div>
+      <div class="ritem"><span class="sub">Registration closes at the end of the Gen Y Meet and Greet, 4:15 PM CST Wednesday 7/1. No one can join once the game is live.</span></div>
+      <div class="ritem"><span class="sub">The hunt begins at 5:15 PM CST.</span></div>
+      <div class="ritem"><span class="sub">The game closes Saturday 7/5 at 8:30 PM CST. Last player standing wins. If more than one player remains, the most points wins, and a tie is settled by a duel.</span></div>
 
-      <div class="rule"><div class="num">5</div><div class="txt"><b>Inherit and continue</b>
-        The instant you confirm, your eliminated target's mark becomes your new target. Keep going without pause.</div></div>
-
-      <div class="rule"><div class="num">6</div><div class="txt"><b>Watch your back</b>
-        Someone out there has <i>you</i> as their target. Your secret code is your life — only reveal it (via the <b>My Code</b> button) when you've genuinely been tagged.</div></div>
-
-      <div class="rule"><div class="num">7</div><div class="txt"><b>Win</b>
-        When the chain loops all the way back and you're the only agent left in play, the operation closes and the victory is yours.</div></div>
+      <div class="rsec">Staying in the Game</div>
+      <div class="ritem"><span class="sub">Keep the device you registered on with you, and log back in using the same browser you signed up with. (Registered in Chrome for iOS? Return in Chrome for iOS.) Reopened somewhere new? Use <b style="text-transform:none;font-size:14px">Recover my game</b> on the check-in screen.</span></div>
+      <div class="ritem"><span class="sub">The app can reach you through the contact details you provided (Messenger, cell, or email) for game master matters only: emergencies like needing to drop out, a game pause for a fire drill, or reporting cheating. You will not be spammed.</span></div>
 
       <div class="rules-foot">
-        Eliminated? In the live game you're out for good — stay and watch the leaderboard. In a practice round, you may be able to rejoin.<br>
-        Fair play: don't reveal your code unless you're truly tagged, and never fake a hit.
+        Fair play: keep your target secret, never fake a hit, and show your code honestly when you're caught.
       </div>
     </div>
   </div>
@@ -274,11 +316,21 @@
   <div id="fxFw" class="fx fx-fw" hidden>
     <canvas id="fxCanvas"></canvas>
     <div class="fx-fwban">
-      <div class="eyebrow">Sole survivor</div>
+      <div class="eyebrow">Champion</div>
       <div class="who" id="fxFwName">—</div>
-      <div class="sub">Last agent standing — operation won</div>
+      <div class="whofull" id="fxFwFull"></div>
+      <div class="fx-sharks"><span>🦈</span><span>🦈</span><span>🦈</span><span>🦈</span></div>
+      <div class="sub">Last agent standing. Operation won</div>
       <div class="tap">Tap anywhere to continue</div>
     </div>
+  </div>
+
+  <div id="fxElim" class="fx fx-elim" hidden>
+    <div class="veil"></div>
+    <div class="ering"><i class="h"></i><i class="b"></i><i class="l"></i><i class="r"></i><div class="ghost">👻</div></div>
+    <div class="ebold" id="fxElimBold">—</div>
+    <div class="efull" id="fxElimFull"></div>
+    <div class="eby" id="fxElimBy"></div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -291,7 +343,8 @@
   let flash = null;
   let lastSig = '';
   let db = null;
-  let prevAlive = null, celebrated = false, caughtShown = false;
+  let prevAlive = null, victoryShown = false, caughtShown = false, shownElims = null;
+  let recoverMode = false, tieData = null, crownAll = false;
 
   const esc = s => (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -309,7 +362,8 @@
     const r = await rpc('am_state', { p_token: token });
     if(r && r.ok){
       if(!r.registered){ // game was reset / token no longer valid -> back to registration
-        localStorage.removeItem(TOKEN_KEY); token = null; state = null; return;
+        localStorage.removeItem(TOKEN_KEY); token = null; state = null;
+        prevAlive = null; caughtShown = false; victoryShown = false; shownElims = null; return;
       }
       state = r;
     }
@@ -319,7 +373,8 @@
     if(!token) return 'register';
     if(!state) return 'loading';
     const lb = (state.leaderboard||[]).map(p=>p.name+p.alive+p.kills).join('|');
-    return [state.status,state.mode,state.me.alive,state.me.kills,state.me.secret,(state.target&&state.target.bold)||'',state.winner,lb].join('~');
+    const w = state.winner ? state.winner.bold : '';
+    return [state.status,state.mode,state.me.alive,state.me.kills,state.me.secret,(state.target&&state.target.bold)||'',w,lb].join('~');
   }
 
   // ---------- render ----------
@@ -363,6 +418,20 @@
   }
 
   function registerView(){
+    if(recoverMode){
+      return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        <div class="eyebrow">Returning player</div>
+        <h2 class="phead">Recover my game</h2>
+        <p class="lede">Reopened on a new browser or device? Enter the email and full name you registered with to reconnect. This never changes your status. If you were eliminated, you stay eliminated.</p>
+        <label class="fld" for="recEmail">Email you registered with</label>
+        <input type="email" id="recEmail" placeholder="you@example.com" autocomplete="email" />
+        <label class="fld" for="recFull">Full name</label>
+        <input type="text" id="recFull" placeholder="First and last, as registered" autocomplete="name" />
+        <button class="block" id="recBtn">Recover my game</button>
+        <button class="sm ghost" id="recBack" style="margin-top:10px">Back to registration</button>
+        ${flashMsg()}
+      </div>`;
+    }
     return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
       <div class="eyebrow">Check in</div>
       <h2 class="phead">Register for the hunt</h2>
@@ -372,10 +441,13 @@
       <label class="fld" for="rBold">Badge name (the big bold name on your badge)</label>
       <input type="text" id="rBold" placeholder="e.g. Mac" autocomplete="off" />
       <label class="fld" for="rFull">Full name</label>
-      <input type="text" id="rFull" placeholder="First and last" autocomplete="name" />
+      <input type="text" id="rFull" placeholder="First and last, as on your badge" autocomplete="name" />
       <label class="fld" for="rEmail">Email</label>
       <input type="email" id="rEmail" placeholder="So the game masters can reach you" autocomplete="email" />
+      <label class="fld" for="rContact">Best way to reach you during the AG</label>
+      <input type="text" id="rContact" placeholder="Messenger handle, cell number, etc." autocomplete="off" />
       <button class="block" id="regBtn">Check in</button>
+      <button class="sm ghost" id="toRecover" style="margin-top:10px">Returning player? Recover my game</button>
       ${flashMsg()}
     </div>`;
   }
@@ -400,12 +472,12 @@
     return `<div class="dossier">
       <div class="bar"><span class="lab">● Target Dossier</span><span class="file">CLASSIFIED</span></div>
       <div class="body"><div class="scan"></div>
-        <div class="desig"><div class="lab">Your mark — find this badge</div>
+        <div class="desig"><div class="lab">Your mark: find this badge</div>
           <div class="nm">${esc(t.bold||'—')}</div>
           ${t.full?`<div style="font-family:var(--mono);font-size:13px;color:var(--slate);letter-spacing:.06em;margin-top:6px">${esc(t.full)}</div>`:''}</div></div>
       <div class="redaction"></div><div class="redaction r2"></div>
       <div class="acquire">
-        <label class="fld" for="killIn">Confirm hit — enter the secret code they show you</label>
+        <label class="fld" for="killIn">Confirm hit: enter the secret code they show you</label>
         <input type="text" id="killIn" placeholder="Their one-word code" autocomplete="off" />
         <button class="block" id="killBtn">Register elimination</button>
         ${flashMsg()}
@@ -416,9 +488,9 @@
   function deadView(){
     const proto = state.mode==='prototype';
     return `<div class="panel"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-      <div class="eyebrow" style="color:var(--alert)">Status — Eliminated</div>
+      <div class="eyebrow" style="color:var(--alert)">Status: Eliminated</div>
       <h2 class="phead" style="color:var(--alert)">You're out of play</h2>
-      <p class="lede">Taken down${state.me.eliminated_by?` by <b style="color:var(--bone)">${esc(state.me.eliminated_by)}</b>`:''}. ${proto?'Prototype mode is on — you can jump back in to keep testing.':'Stay and watch the board: last agent standing wins.'}</p>
+      <p class="lede">Taken down${state.me.eliminated_by?` by <b style="color:var(--bone)">${esc(state.me.eliminated_by)}</b>`:''}. ${proto?'Prototype mode is on. You can jump back in to keep testing.':'Stay and watch the board: last agent standing wins.'}</p>
       ${proto?`<button class="block" id="rejoinBtn">Rejoin the hunt</button>`:''}
       ${flashMsg()}
     </div>${scoreboard()}`;
@@ -426,9 +498,11 @@
 
   function endedView(){
     const lb=[...(state.leaderboard||[])].sort((a,b)=>b.kills-a.kills);
+    const w=state.winner||{};
     return `<div class="panel center"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-      <div class="eyebrow center">Operation closed — sole survivor</div><div class="spacer"></div>
-      <div class="big-win">${esc(state.winner||'—')}</div>
+      <div class="eyebrow center">Operation closed: champion</div><div class="spacer"></div>
+      <div class="big-win">${esc(w.bold||'—')}</div>
+      ${w.full?`<div style="font-family:var(--mono);font-size:14px;color:var(--slate);letter-spacing:.08em;margin-top:8px">${esc(w.full)}</div>`:''}
     </div>
     <div class="panel"><div class="eyebrow">Final tally</div><h2 class="phead">Leaderboard</h2>
       <div class="roster">${lb.map(boardRow).join('')}</div>${gmPanel()}</div>`;
@@ -466,22 +540,37 @@
         const emails=gmRoster.map(p=>p.email).join(', ');
         roster = `<div class="eyebrow" style="margin-top:14px">Roster &amp; contacts ${modeBadge}</div>
           <div class="gm-actions"><button class="sm ghost" id="copyEmails">Copy all emails</button>
-          <a href="mailto:?bcc=${encodeURIComponent(emails)}"><button class="sm ghost">Email everyone (BCC)</button></a></div>
+          <a href="mailto:?bcc=${encodeURIComponent(emails)}"><button class="sm ghost">Email everyone (BCC)</button></a>
+          <button class="sm ghost" id="csvBtn">Download roster (CSV)</button></div>
           <div class="roster">${gmRoster.map(p=>`<div class="pill ${p.alive?'':'dead'}">
-            <span class="nm">${esc(p.name)}<br><span class="meta2">${esc(p.email)} · badge: ${esc(p.badge)}${p.target?' · →'+esc(p.target):''}</span></span>
-            <span style="display:flex;gap:6px">
+            <span class="nm">${esc(p.bold)}${p.dup?' <span style="color:var(--alert);font-size:11px">⚠ possible duplicate</span>':''}<br>
+              <span class="meta2">${esc(p.full)} · ${esc(p.email)}<br>reach: ${esc(p.contact)} · code: ${esc(p.code)}${p.target?' · →'+esc(p.target):''}</span></span>
+            <span style="display:flex;gap:6px;align-items:flex-start">
               <span class="meta2"><span class="kc">${p.kills}</span>✕</span>
               ${p.alive && st==='active' ? `<button class="sm danger" data-elim="${p.id}">Out</button>`:''}
               ${st==='lobby' ? `<button class="sm danger" data-remove="${p.id}">Remove</button>`:''}
             </span></div>`).join('')}</div>`;
       }
+      let tie='';
+      if(tieData){
+        const leaders = tieData.leaders||[];
+        const pool = crownAll ? (gmRoster||[]).filter(p=>p.alive) : leaders;
+        tie = `<div class="eyebrow" style="margin-top:14px;color:var(--gold)">Tie at ${tieData.topkills} ${tieData.topkills===1?'point':'points'}</div>
+          <p class="lede" style="font-size:13px">Settle it in person (a duel, rock-paper-scissors, your call), then tap the winner:</p>
+          <div class="crownlist">${pool.map(p=>`<button class="sm" data-crown="${p.id}">👑 ${esc(p.bold)}</button>`).join('')}</div>
+          <div class="gm-actions">
+            <button class="sm ghost" id="crownToggle">${crownAll?'Show tied leaders only':'Crown someone else instead'}</button>
+            <button class="sm ghost" id="crownCancel">Cancel</button>
+          </div>`;
+      }
       inner = `<div class="gm-actions">
           ${st==='lobby'?`<button class="sm" id="startBtn">Start operation</button>`:''}
+          ${st==='active'?`<button class="sm" id="endBtn">End game &amp; crown winner</button>`:''}
           <button class="sm ghost" id="modeBtn">Switch to ${state && state.mode==='prototype'?'LIVE':'PROTOTYPE'}</button>
           <button class="sm ghost" id="refreshRoster">${gmRoster?'Refresh roster':'Show roster + contacts'}</button>
           <button class="sm danger" id="resetBtn">Reset / clear all</button>
           <button class="sm ghost" id="gmLock">Lock</button>
-        </div>${roster}${flashMsg()}`;
+        </div>${tie}${roster}${flashMsg()}`;
     }
     return `<details class="gm"><summary>Game master controls</summary>${inner}</details>`;
   }
@@ -493,16 +582,26 @@
 
     const rb=$('regBtn');
     if(rb){ const go=async()=>{ flash=null;
-        const r=await rpc('am_join',{p_code:$('rCode').value,p_bold:$('rBold').value,p_full:$('rFull').value,p_email:$('rEmail').value});
+        const r=await rpc('am_join',{p_code:$('rCode').value,p_bold:$('rBold').value,p_full:$('rFull').value,p_email:$('rEmail').value,p_contact:$('rContact').value});
         if(r.ok){ token=r.token; localStorage.setItem(TOKEN_KEY,token); flash=null; }
         else flash={type:'err',text:r.error};
         await after(); };
       rb.onclick=go; }
 
+    const tr=$('toRecover'); if(tr){ tr.onclick=()=>{ recoverMode=true; flash=null; render(true); }; }
+    const rbk=$('recBack'); if(rbk){ rbk.onclick=()=>{ recoverMode=false; flash=null; render(true); }; }
+    const rcb=$('recBtn');
+    if(rcb){ const go=async()=>{ flash=null;
+        const r=await rpc('am_recover',{p_email:$('recEmail').value,p_full:$('recFull').value});
+        if(r.ok){ token=r.token; localStorage.setItem(TOKEN_KEY,token); recoverMode=false; flash=null; shownElims=null; prevAlive=null; }
+        else flash={type:'err',text:r.error};
+        await after(); };
+      rcb.onclick=go; const rf=$('recFull'); if(rf) rf.onkeydown=e=>{if(e.key==='Enter')go();}; }
+
     const kb=$('killBtn');
-    if(kb){ const go=async()=>{ flash=null;
+    if(kb){ const go=async()=>{ if(kb.disabled) return; kb.disabled=true; flash=null;   // disable blocks button-mashing
         const r=await rpc('am_kill',{p_token:token,p_guess:$('killIn').value});
-        if(r.ok) flash={type:'ok',text:r.ended?`${r.eliminated} eliminated — you're the last agent standing.`:`Confirmed: ${r.eliminated} eliminated. New target below.`};
+        if(r.ok) flash={type:'ok',text:r.ended?`${r.eliminated} eliminated. You're the last agent standing.`:`Confirmed: ${r.eliminated} eliminated. New target below.`};
         else flash={type:'err',text:r.error};
         await after(); };
       kb.onclick=go; const ki=$('killIn'); if(ki) ki.onkeydown=e=>{if(e.key==='Enter')go();}; }
@@ -520,6 +619,24 @@
     const sb=$('startBtn');
     if(sb){ sb.onclick=async()=>{ if(!confirm('Start the operation and issue targets to everyone?'))return;
         const r=await rpc('am_gm_start',{p_gm:gmCode}); flash=r.ok?{type:'ok',text:`Operation started with ${r.players} agents.`}:{type:'err',text:r.error}; await after(); keepGmOpen(); }; }
+
+    const eb=$('endBtn');
+    if(eb){ eb.onclick=async()=>{ if(!confirm('End the game now and crown a winner?'))return;
+        const r=await rpc('am_gm_end',{p_gm:gmCode});
+        if(r.ok && r.tie){ tieData={leaders:r.leaders,topkills:r.topkills}; crownAll=false; flash={type:'ok',text:'Tie at the top. Pick the winner below.'}; render(true); keepGmOpen(); }
+        else if(r.ok){ tieData=null; flash={type:'ok',text:`Winner crowned: ${r.winner.bold}.`}; await after(); keepGmOpen(); }
+        else { flash={type:'err',text:r.error}; render(true); keepGmOpen(); } }; }
+
+    const ct=$('crownToggle'); if(ct){ ct.onclick=()=>{ crownAll=!crownAll; render(true); keepGmOpen(); }; }
+    const cc=$('crownCancel'); if(cc){ cc.onclick=()=>{ tieData=null; crownAll=false; flash=null; render(true); keepGmOpen(); }; }
+    document.querySelectorAll('[data-crown]').forEach(el=>el.onclick=async()=>{
+      const r=await rpc('am_gm_crown',{p_gm:gmCode,p_id:el.getAttribute('data-crown')});
+      if(r.ok){ tieData=null; crownAll=false; flash={type:'ok',text:`Winner crowned: ${r.winner.bold}.`}; }
+      else flash={type:'err',text:r.error};
+      await after(); keepGmOpen(); });
+
+    const csv=$('csvBtn');
+    if(csv){ csv.onclick=()=>{ downloadRosterCsv(); keepGmOpen(); }; }
 
     const mb=$('modeBtn');
     if(mb){ mb.onclick=async()=>{ const next=state.mode==='prototype'?'live':'prototype';
@@ -552,14 +669,39 @@
   function keepGmOpen(){ const d=document.querySelector('details.gm'); if(d) d.open=true; }
   async function refreshRoster(){ if(!gmCode) return; const r=await rpc('am_gm_roster',{p_gm:gmCode}); if(r.ok) gmRoster=r.roster; }
 
+  function downloadRosterCsv(){
+    const rows=gmRoster||[]; if(!rows.length){ flash={type:'err',text:'Show the roster first, then download.'}; render(true); return; }
+    const q=s=>'"'+(s==null?'':String(s)).replace(/"/g,'""')+'"';
+    const head=['Badge name','Full name','Email','Contact','Secret code','Points','Status','Target'];
+    const lines=[head.map(q).join(',')];
+    rows.forEach(p=>lines.push([p.bold,p.full,p.email,p.contact,p.code,p.kills,p.alive?'in play':'eliminated',p.target||''].map(q).join(',')));
+    const blob=new Blob([lines.join('\r\n')],{type:'text/csv'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    const d=new Date().toISOString().slice(0,10);
+    a.href=url; a.download=`assassim-roster-${d}.csv`; document.body.appendChild(a); a.click();
+    a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+    flash={type:'ok',text:'Roster CSV downloaded.'}; render(true);
+  }
+
   // ---------- celebratory / elimination FX ----------
   function checkTransitions(){
     if(!state || !state.registered || !state.me){ prevAlive=null; return; }
-    const meAlive = state.me.alive, st = state.status;
+    const meAlive = state.me.alive, st = state.status, me = state.me;
+    // personal: you were caught
     if(prevAlive===true && meAlive===false && !caughtShown){ caughtShown=true; playCaught(); }
-    if(meAlive===true) caughtShown=false;                       // re-arm for a later death (rejoin)
-    if(st==='ended' && meAlive===true && !celebrated){ celebrated=true; playFireworks(state.winner||state.me.bold); }
-    if(st!=='ended') celebrated=false;                          // re-arm for the next game
+    if(meAlive===true) caughtShown=false;
+    // global: someone else was eliminated (race-safe, driven off the polled state)
+    const elims = state.eliminations||[];
+    if(shownElims===null){ shownElims = new Set(elims.map(e=>e.id)); }   // seed: don't replay the backlog
+    else {
+      const fresh = elims.filter(e=>!shownElims.has(e.id));
+      fresh.forEach(e=>shownElims.add(e.id));
+      const others = fresh.filter(e=>!(e.bold===me.bold && e.full===me.full));  // my own fall shows as "caught"
+      if(others.length){ const e=others[0]; playGlobalElim(e.bold,e.full,e.by); } // newest first
+    }
+    // shared: everyone sees the champion
+    if(st==='ended' && state.winner && !victoryShown){ victoryShown=true; playVictory(state.winner.bold, state.winner.full); }
+    if(st!=='ended') victoryShown=false;
     prevAlive = meAlive;
   }
 
@@ -569,9 +711,22 @@
     setTimeout(()=>{ ov.hidden=true; ov.classList.remove('run'); }, 2300);
   }
 
-  function playFireworks(name){
+  function playGlobalElim(bold, full, by){
+    const ov=document.getElementById('fxElim');
+    document.getElementById('fxElimBold').textContent = bold||'—';
+    document.getElementById('fxElimFull').textContent = full||'';
+    document.getElementById('fxElimBy').textContent = by ? ('Eliminated by '+by) : 'Eliminated';
+    ov.hidden=false; ov.classList.remove('run'); void ov.offsetWidth; ov.classList.add('run');
+    setTimeout(()=>{ ov.hidden=true; ov.classList.remove('run'); }, 2600);
+  }
+
+  function playVictory(bold, full){
     const ov=document.getElementById('fxFw');
-    document.getElementById('fxFwName').textContent = name || 'You';
+    document.getElementById('fxFwName').textContent = bold || 'Champion';
+    document.getElementById('fxFwFull').textContent = full || '';
+    // if the runner-up's "caught" screen is mid-play, let it finish first
+    const caught=document.getElementById('fxCaught');
+    if(caught && !caught.hidden){ setTimeout(()=>playVictory(bold,full), 2400); return; }
     ov.hidden=false;
     let running=true, raf=null;
     function stop(){ running=false; if(raf) cancelAnimationFrame(raf); ov.hidden=true; }
@@ -647,7 +802,16 @@
     render(true);
     if(db){
       await loadState(); checkTransitions(); render(true);
-      setInterval(async()=>{ await loadState(); checkTransitions(); if(gmCode) await refreshRoster(); render(false); }, 3000);
+      let pollTimer=null;
+      const poll=async()=>{ await loadState(); checkTransitions(); if(gmCode) await refreshRoster(); render(false); };
+      const startPolling=()=>{ if(!pollTimer) pollTimer=setInterval(poll, 3000); };
+      const stopPolling=()=>{ if(pollTimer){ clearInterval(pollTimer); pollTimer=null; } };
+      startPolling();
+      // pause polling when the app isn't the active window (saves egress); refresh instantly on return
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.hidden){ stopPolling(); }
+        else { poll(); startPolling(); }
+      });
     }
   })();
 </script>
